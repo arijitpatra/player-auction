@@ -27,6 +27,14 @@ class Profile extends Component {
     }
   };
 
+  onAdd = value => {
+    const updatedValue = {
+      ...this.state.dataToDisplay,
+      CurrentPrice: this.state.dataToDisplay.CurrentPrice + value
+    };
+    this.setState({ dataToDisplay: updatedValue });
+  };
+
   render() {
     const { dataToDisplay } = this.state;
     return (
@@ -86,9 +94,15 @@ class Profile extends Component {
                 />
               );
             })}
-            <div className="increment-button">100</div>
-            <div className="increment-button">200</div>
-            <div className="increment-button">300</div>
+            <div className="increment-button" onClick={() => this.onAdd(100)}>
+              100
+            </div>
+            <div className="increment-button" onClick={() => this.onAdd(200)}>
+              200
+            </div>
+            <div className="increment-button" onClick={() => this.onAdd(300)}>
+              300
+            </div>
           </section>
         </section>
 
