@@ -18,6 +18,7 @@
       color: #ce0c15;
       font-size: 12px;
       margin-bottom: 7px;
+      letter-spacing: 3px;
     }
 
     .value {
@@ -74,6 +75,7 @@
         background: white;
         border: 2px solid #04ad5f;
         font-size: 16px;
+        user-select: none;
         &:hover {
           border: none;
           cursor: pointer;
@@ -102,6 +104,7 @@
         color: #ce0c15;
         font-size: 18px;
         margin-bottom: 10px;
+        letter-spacing: 5px;
       }
       .value {
         font-size: 60px;

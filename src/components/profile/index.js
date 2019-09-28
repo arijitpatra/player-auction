@@ -1,18 +1,30 @@
 import React, { Component } from "react";
-import { allTeams, data } from "../../appConstants";
+import { allTeams } from "../../appConstants";
 import "./index.scss";
 
 class Profile extends Component {
   state = {
     currentId: 1,
-    fullData: data,
-    dataToDisplay: data[0]
+    fullData: "",
+    dataToDisplay: ""
   };
 
+  componentDidMount() {
+    fetch("./backend.json")
+      .then(response => response.json())
+      .then(data => {
+        // filtering
+        this.setState({ fullData: data, dataToDisplay: data[0] });
+      })
+      .catch(err => {
+        console.log("Error Reading data " + err);
+      });
+  }
+
   onNext = () => {
-    if (this.state.currentId < data.length - 1) {
+    if (this.state.currentId < this.state.fullData.length - 1) {
       this.setState({
-        dataToDisplay: data[this.state.currentId + 1],
+        dataToDisplay: this.state.fullData[this.state.currentId + 1],
         currentId: this.state.currentId + 1
       });
     }
@@ -21,7 +33,7 @@ class Profile extends Component {
   onPrevious = () => {
     if (this.state.currentId >= 1) {
       this.setState({
-        dataToDisplay: data[this.state.currentId - 1],
+        dataToDisplay: this.state.fullData[this.state.currentId - 1],
         currentId: this.state.currentId - 1
       });
     }
@@ -35,17 +47,40 @@ class Profile extends Component {
     this.setState({ dataToDisplay: updatedValue });
   };
 
+  onTeamSelection = teamObject => {
+    const updatedValue = {
+      ...this.state.dataToDisplay,
+      teamIcon: teamObject.imgSrc,
+      teamSoldTo: teamObject.name,
+      isSold: true
+    };
+    this.setState({ dataToDisplay: updatedValue });
+
+    // const updatedJson = this.state.fullData;
+
+    const updatedJson = this.state.fullData.map(item => {
+      if (item.id === this.state.dataToDisplay.id) {
+        return (item = updatedValue);
+      } else {
+        return item;
+      }
+    });
+
+    const fileData = JSON.stringify(updatedJson);
+    const blob = new Blob([fileData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "backend.json";
+    link.href = url;
+    link.click();
+  };
+
   render() {
     const { dataToDisplay } = this.state;
     return (
       <section className="profile">
         <section className="action">
           <div>
-            <select>
-              <option value="A">Group A</option>
-              <option value="B">Group B</option>
-              <option value="C">Group C</option>
-            </select>
             <div className="change-player">
               <span className="previous" onClick={() => this.onPrevious()}>
                 Previous
@@ -91,6 +126,7 @@ class Profile extends Component {
                   className="team-icons"
                   title={team.name}
                   src={team.imgSrc}
+                  onClick={() => this.onTeamSelection(team)}
                 />
               );
             })}
