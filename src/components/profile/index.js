@@ -6,15 +6,32 @@ class Profile extends Component {
   state = {
     currentId: 1,
     fullData: "",
-    dataToDisplay: ""
+    dataToDisplay: "",
+    allData: ""
   };
 
   componentDidMount() {
     fetch("./backend.json")
       .then(response => response.json())
       .then(data => {
-        // filtering
-        this.setState({ fullData: data, dataToDisplay: data[0] });
+        const unsold = data.filter(item => {
+          if (item.isSold === false) {
+            return item;
+          }
+        });
+
+        for (let i = 0; i < unsold.length - 1; i++) {
+          let j = i + Math.floor(Math.random() * (unsold.length - i));
+          const temp = unsold[j];
+          unsold[j] = unsold[i];
+          unsold[i] = temp;
+        }
+
+        this.setState({
+          allData: data,
+          fullData: unsold,
+          dataToDisplay: unsold[0]
+        });
       })
       .catch(err => {
         console.log("Error Reading data " + err);
@@ -56,8 +73,6 @@ class Profile extends Component {
     };
     this.setState({ dataToDisplay: updatedValue });
 
-    // const updatedJson = this.state.fullData;
-
     const updatedJson = this.state.fullData.map(item => {
       if (item.id === this.state.dataToDisplay.id) {
         return (item = updatedValue);
@@ -81,17 +96,53 @@ class Profile extends Component {
       <section className="profile">
         <section className="action">
           <div>
-            <div className="change-player">
-              <span className="previous" onClick={() => this.onPrevious()}>
-                Previous
-              </span>
-              <span className="next" onClick={() => this.onNext()}>
-                Next
-              </span>
-            </div>
+            {/* <div className="team-icons-header-container">
+              {allTeams.map(team => {
+                return (
+                  <div className="header-tags">
+                    <img
+                      key={team.id}
+                      className="team-icons-header"
+                      title={team.name}
+                      src={team.imgSrc}
+                      onClick={() => this.onTeamSelection(team)}
+                    />
+                    <span>₹ 10000</span>
+                  </div>
+                );
+              })}
+            </div> */}
           </div>
         </section>
         <section className="card">
+          <section className="pricing">
+            <div className="pricing-blocks">
+              <div className="label">Base Price</div>
+              <div className="value">
+                <span className="rupee-icon">₹</span>
+                {dataToDisplay.basePrice}
+              </div>
+            </div>
+            <div className="pricing-blocks">
+              <div className="label">Current Price</div>
+              <div className="value">
+                <span className="rupee-icon">₹</span>
+                {dataToDisplay.CurrentPrice}
+              </div>
+            </div>
+          </section>
+          <div className="change-player">
+            <div
+              className="previous"
+              onClick={() => this.onPrevious()}
+              title="Previous"
+            >
+              <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            </div>
+            <div className="next" onClick={() => this.onNext()} title="Next">
+              <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
+          </div>
           <img src={dataToDisplay.photoPath} />
           <div>
             <div className="player-name">
@@ -131,26 +182,15 @@ class Profile extends Component {
               );
             })}
             <div className="increment-button" onClick={() => this.onAdd(100)}>
-              100
+              ₹ 100
             </div>
             <div className="increment-button" onClick={() => this.onAdd(200)}>
-              200
+              ₹ 200
             </div>
             <div className="increment-button" onClick={() => this.onAdd(300)}>
-              300
+              ₹ 300
             </div>
           </section>
-        </section>
-
-        <section className="pricing">
-          <div className="pricing-blocks">
-            <div className="label">Base Price</div>
-            <div className="value">₹ {dataToDisplay.basePrice}</div>
-          </div>
-          <div className="pricing-blocks">
-            <div className="label">Current Price</div>
-            <div className="value">₹ {dataToDisplay.CurrentPrice}</div>
-          </div>
         </section>
       </section>
     );

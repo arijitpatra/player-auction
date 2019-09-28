@@ -1,6 +1,6 @@
 .profile {
   display: flex;
-  margin-top: 2.5rem;
+  margin-top: 3.5%;
   margin-left: 1rem;
   justify-content: center;
 
@@ -50,13 +50,13 @@
       padding-left: 1.5rem;
       border-left: 1px solid #d1d1d1;
       width: 155px;
-      margin-top: 7rem;
+      margin-top: 7.5rem;
 
       .team-icons {
         height: 55px;
         width: 55px;
         border: none;
-        margin: 0.5rem;
+        margin: 0 0.5rem;
         filter: grayscale(100%);
       }
       .team-icons:hover {
@@ -92,9 +92,9 @@
 
   .pricing {
     position: absolute;
-    bottom: 5rem;
+    bottom: -10rem;
     display: flex;
-    left: 0;
+    left: 6rem;
 
     &-blocks {
       padding: 0 7rem;
@@ -110,12 +110,42 @@
         font-size: 60px;
       }
     }
+
+    .rupee-icon {
+      font-size: 42px;
+    }
+    .rupee-icon:after {
+      content: " ";
+    }
   }
 
   .action {
     position: absolute;
     margin-top: -5.9rem;
     left: 11rem;
+
+    .header-tags {
+      display: flex;
+      font-size: 12px;
+      border: 1px solid red;
+      height: 30px;
+      width: 75px;
+      justify-content: center;
+      align-items: center;
+      margin: 0 0.5rem;
+      border-radius: 5px;
+    }
+
+    .team-icons-header-container {
+      position: absolute;
+      display: flex;
+    }
+
+    .team-icons-header {
+      width: 25px;
+      height: 25px;
+      border: none;
+    }
   }
 
   select {
@@ -126,12 +156,14 @@
   }
 
   .change-player {
-    display: inline-block;
+    display: flex;
     padding: 0.5rem;
-    border: 2px solid #ce0c15;
     color: #ce0c15;
     font-size: 14px;
-    margin-left: 2.5rem;
+    position: absolute;
+    right: 20%;
+    z-index: 99999;
+    top: 5%;
 
     .previous {
       padding: 0.5rem;
