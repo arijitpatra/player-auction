@@ -1,8 +1,34 @@
 .profile {
   display: flex;
-  margin-top: 3.5%;
+  margin-top: 3%;
   margin-left: 1rem;
   justify-content: center;
+
+  .filter {
+    display: flex;
+    margin: 0.5rem 0;
+
+    .sold,
+    .unsold {
+      padding: 0.5rem;
+      font-size: 12px;
+      color: #ce0c15;
+      border: 2px solid #ce0c15;
+      margin: 0 0.5rem;
+    }
+
+    .sold:hover,
+    .unsold:hover {
+      color: white;
+      background: #ce0c15;
+      cursor: pointer;
+    }
+
+    .active-filter {
+      color: white;
+      background: #ce0c15;
+    }
+  }
 
   .card {
     border-radius: 5px;
@@ -31,6 +57,22 @@
     .player-name {
       margin: 3.5rem;
       width: 550px;
+      .sold {
+        width: 75px;
+        height: 75px;
+        position: absolute;
+        border: none;
+        top: 1rem;
+        left: 35rem;
+      }
+      .sold-team {
+        width: 75px;
+        height: 75px;
+        position: absolute;
+        border: none;
+        top: 1rem;
+        left: 42rem;
+      }
     }
 
     .other-info {

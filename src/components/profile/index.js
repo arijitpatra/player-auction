@@ -7,16 +7,34 @@ class Profile extends Component {
     currentId: 1,
     fullData: "",
     dataToDisplay: "",
-    allData: ""
+    allData: "",
+    isSold: false,
+    isUnsoldSelected: true
   };
 
   componentDidMount() {
+    this.fetchData();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.isUnsoldSelected !== this.state.isUnsoldSelected) {
+      this.fetchData();
+    }
+  }
+
+  fetchData = () => {
     fetch("./backend.json")
       .then(response => response.json())
       .then(data => {
         const unsold = data.filter(item => {
-          if (item.isSold === false) {
-            return item;
+          if (this.state.isUnsoldSelected) {
+            if (item.isSold === false) {
+              return item;
+            }
+          } else {
+            if (item.isSold === true) {
+              return item;
+            }
           }
         });
 
@@ -36,13 +54,14 @@ class Profile extends Component {
       .catch(err => {
         console.log("Error Reading data " + err);
       });
-  }
+  };
 
   onNext = () => {
     if (this.state.currentId < this.state.fullData.length - 1) {
       this.setState({
         dataToDisplay: this.state.fullData[this.state.currentId + 1],
-        currentId: this.state.currentId + 1
+        currentId: this.state.currentId + 1,
+        isSold: false
       });
     }
   };
@@ -51,7 +70,8 @@ class Profile extends Component {
     if (this.state.currentId >= 1) {
       this.setState({
         dataToDisplay: this.state.fullData[this.state.currentId - 1],
-        currentId: this.state.currentId - 1
+        currentId: this.state.currentId - 1,
+        isSold: false
       });
     }
   };
@@ -71,9 +91,9 @@ class Profile extends Component {
       teamSoldTo: teamObject.name,
       isSold: true
     };
-    this.setState({ dataToDisplay: updatedValue });
+    this.setState({ dataToDisplay: updatedValue, isSold: true });
 
-    const updatedJson = this.state.fullData.map(item => {
+    const updatedJson = this.state.allData.map(item => {
       if (item.id === this.state.dataToDisplay.id) {
         return (item = updatedValue);
       } else {
@@ -81,13 +101,15 @@ class Profile extends Component {
       }
     });
 
-    const fileData = JSON.stringify(updatedJson);
-    const blob = new Blob([fileData], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = "backend.json";
-    link.href = url;
-    link.click();
+    setTimeout(() => {
+      const fileData = JSON.stringify(updatedJson);
+      const blob = new Blob([fileData], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = "backend.json";
+      link.href = url;
+      link.click();
+    }, 1500);
   };
 
   render() {
@@ -112,6 +134,29 @@ class Profile extends Component {
                 );
               })}
             </div> */}
+            <div className="filter">
+              <div
+                className={
+                  this.state.isUnsoldSelected === false
+                    ? "active-filter sold"
+                    : "sold"
+                }
+                onClick={() => this.setState({ isUnsoldSelected: false })}
+              >
+                <i class="fa fa-filter" aria-hidden="true"></i> SOLD
+              </div>
+              <div
+                className="unsold"
+                className={
+                  this.state.isUnsoldSelected === true
+                    ? "active-filter unsold"
+                    : "unsold"
+                }
+                onClick={() => this.setState({ isUnsoldSelected: true })}
+              >
+                <i class="fa fa-filter" aria-hidden="true"></i> UNSOLD
+              </div>
+            </div>
           </div>
         </section>
         <section className="card">
@@ -137,17 +182,45 @@ class Profile extends Component {
               onClick={() => this.onPrevious()}
               title="Previous"
             >
-              <i class="fa fa-arrow-left" aria-hidden="true"></i>
+              <i className="fa fa-arrow-left" aria-hidden="true"></i>
             </div>
             <div className="next" onClick={() => this.onNext()} title="Next">
-              <i class="fa fa-arrow-right" aria-hidden="true"></i>
+              <i className="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
           </div>
           <img src={dataToDisplay.photoPath} />
           <div>
             <div className="player-name">
               <div className="label">PLAYER</div>
-              <div className="value value-name">{dataToDisplay.name}</div>
+              <div className="value value-name">
+                {dataToDisplay.name}
+                {this.state.isSold === true ? (
+                  <img
+                    className="sold"
+                    src={
+                      "https://freepngimg.com/thumb/sold_out/1-2-sold-out-png-picture-thumb.png"
+                    }
+                  ></img>
+                ) : (
+                  ""
+                )}
+                {dataToDisplay.isSold === true ? (
+                  <span>
+                    <img
+                      className="sold"
+                      src={
+                        "https://freepngimg.com/thumb/sold_out/1-2-sold-out-png-picture-thumb.png"
+                      }
+                    ></img>
+                    <img
+                      className="sold-team"
+                      src={dataToDisplay.teamIcon}
+                    ></img>
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
               <div className="other-info">
                 <div className="info-blocks">
                   <div className="label">FLAT</div>
@@ -169,28 +242,32 @@ class Profile extends Component {
             </div>
           </div>
 
-          <section className="teams">
-            {allTeams.map(team => {
-              return (
-                <img
-                  key={team.id}
-                  className="team-icons"
-                  title={team.name}
-                  src={team.imgSrc}
-                  onClick={() => this.onTeamSelection(team)}
-                />
-              );
-            })}
-            <div className="increment-button" onClick={() => this.onAdd(100)}>
-              ₹ 100
-            </div>
-            <div className="increment-button" onClick={() => this.onAdd(200)}>
-              ₹ 200
-            </div>
-            <div className="increment-button" onClick={() => this.onAdd(300)}>
-              ₹ 300
-            </div>
-          </section>
+          {dataToDisplay.isSold ? (
+            ""
+          ) : (
+            <section className="teams">
+              {allTeams.map(team => {
+                return (
+                  <img
+                    key={team.id}
+                    className="team-icons"
+                    title={team.name}
+                    src={team.imgSrc}
+                    onClick={() => this.onTeamSelection(team)}
+                  />
+                );
+              })}
+              <div className="increment-button" onClick={() => this.onAdd(100)}>
+                ₹ 100
+              </div>
+              <div className="increment-button" onClick={() => this.onAdd(200)}>
+                ₹ 200
+              </div>
+              <div className="increment-button" onClick={() => this.onAdd(300)}>
+                ₹ 300
+              </div>
+            </section>
+          )}
         </section>
       </section>
     );
