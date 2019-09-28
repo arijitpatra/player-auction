@@ -38,12 +38,12 @@ class Profile extends Component {
           }
         });
 
-        for (let i = 0; i < unsold.length - 1; i++) {
-          let j = i + Math.floor(Math.random() * (unsold.length - i));
-          const temp = unsold[j];
-          unsold[j] = unsold[i];
-          unsold[i] = temp;
-        }
+        // for (let i = 0; i < unsold.length - 1; i++) {
+        //   let j = i + Math.floor(Math.random() * (unsold.length - i));
+        //   const temp = unsold[j];
+        //   unsold[j] = unsold[i];
+        //   unsold[i] = temp;
+        // }
 
         this.setState({
           allData: data,
@@ -58,6 +58,34 @@ class Profile extends Component {
 
   onNext = () => {
     if (this.state.currentId < this.state.fullData.length - 1) {
+      // console.log(this.state.dataToDisplay.basePrice);
+      // if (this.state.dataToDisplay.basePrice > 100) {
+      //   const updatedValue = {
+      //     ...this.state.dataToDisplay,
+      //     basePrice: this.state.dataToDisplay.basePrice - 100,
+      //     currentPrice: this.state.dataToDisplay.currentPrice - 100
+      //   };
+      //   this.setState({ dataToDisplay: updatedValue });
+
+      //   const updatedJson = this.state.allData.map(item => {
+      //     if (item.id === this.state.dataToDisplay.id) {
+      //       return (item = updatedValue);
+      //     } else {
+      //       return item;
+      //     }
+      //   });
+
+      //   setTimeout(() => {
+      //     const fileData = JSON.stringify(updatedJson);
+      //     const blob = new Blob([fileData], { type: "text/plain" });
+      //     const url = URL.createObjectURL(blob);
+      //     const link = document.createElement("a");
+      //     link.download = "backend.json";
+      //     link.href = url;
+      //     link.click();
+      //   }, 500);
+      // }
+
       this.setState({
         dataToDisplay: this.state.fullData[this.state.currentId + 1],
         currentId: this.state.currentId + 1,
@@ -79,7 +107,7 @@ class Profile extends Component {
   onAdd = value => {
     const updatedValue = {
       ...this.state.dataToDisplay,
-      CurrentPrice: this.state.dataToDisplay.CurrentPrice + value
+      currentPrice: this.state.dataToDisplay.currentPrice + value
     };
     this.setState({ dataToDisplay: updatedValue });
   };
@@ -137,53 +165,68 @@ class Profile extends Component {
             <div className="filter">
               <div
                 className={
-                  this.state.isUnsoldSelected === false
+                  this.state.isUnsoldSelected === false && dataToDisplay.isSold
                     ? "active-filter sold"
                     : "sold"
                 }
                 onClick={() => this.setState({ isUnsoldSelected: false })}
               >
-                <i class="fa fa-filter" aria-hidden="true"></i> SOLD
+                <i className="fa fa-filter" aria-hidden="true"></i> SOLD
               </div>
               <div
-                className="unsold"
                 className={
-                  this.state.isUnsoldSelected === true
+                  this.state.isUnsoldSelected === true && !dataToDisplay.isSold
                     ? "active-filter unsold"
                     : "unsold"
                 }
                 onClick={() => this.setState({ isUnsoldSelected: true })}
               >
-                <i class="fa fa-filter" aria-hidden="true"></i> UNSOLD
+                <i className="fa fa-filter" aria-hidden="true"></i> UNSOLD
               </div>
             </div>
           </div>
         </section>
         <section className="card">
           <section className="pricing">
-            <div className="pricing-blocks">
-              <div className="label">Base Price</div>
-              <div className="value">
-                <span className="rupee-icon">₹</span>
-                {dataToDisplay.basePrice}
+            {this.state.isUnsoldSelected === false ? (
+              <div className="pricing-blocks pricing-blocks-centered">
+                <div className="label">Final Price</div>
+                <div className="value">
+                  <span className="rupee-icon">₹</span>
+                  {dataToDisplay.currentPrice}
+                </div>
               </div>
-            </div>
-            <div className="pricing-blocks">
-              <div className="label">Current Price</div>
-              <div className="value">
-                <span className="rupee-icon">₹</span>
-                {dataToDisplay.CurrentPrice}
-              </div>
-            </div>
+            ) : (
+              <React.Fragment>
+                <div className="pricing-blocks">
+                  <div className="label">Base Price</div>
+                  <div className="value">
+                    <span className="rupee-icon">₹</span>
+                    {dataToDisplay.basePrice}
+                  </div>
+                </div>
+                <div className="pricing-blocks">
+                  <div className="label">Current Price</div>
+                  <div className="value">
+                    <span className="rupee-icon">₹</span>
+                    {dataToDisplay.currentPrice}
+                  </div>
+                </div>
+              </React.Fragment>
+            )}
           </section>
           <div className="change-player">
-            <div
-              className="previous"
-              onClick={() => this.onPrevious()}
-              title="Previous"
-            >
-              <i className="fa fa-arrow-left" aria-hidden="true"></i>
-            </div>
+            {this.state.isUnsoldSelected === false ? (
+              <div
+                className="previous"
+                onClick={() => this.onPrevious()}
+                title="Previous"
+              >
+                <i className="fa fa-arrow-left" aria-hidden="true"></i>
+              </div>
+            ) : (
+              ""
+            )}
             <div className="next" onClick={() => this.onNext()} title="Next">
               <i className="fa fa-arrow-right" aria-hidden="true"></i>
             </div>

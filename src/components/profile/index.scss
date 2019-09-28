@@ -63,7 +63,7 @@
         position: absolute;
         border: none;
         top: 1rem;
-        left: 35rem;
+        left: 30rem;
       }
       .sold-team {
         width: 75px;
@@ -71,7 +71,7 @@
         position: absolute;
         border: none;
         top: 1rem;
-        left: 42rem;
+        left: 35rem;
       }
     }
 
@@ -140,6 +140,9 @@
 
     &-blocks {
       padding: 0 7rem;
+      &.pricing-blocks-centered {
+        padding: 0 19rem;
+      }
       .label {
         text-transform: uppercase;
         font-weight: bold;
