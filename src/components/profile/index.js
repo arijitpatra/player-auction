@@ -4,7 +4,7 @@ import "./index.scss";
 
 class Profile extends Component {
   state = {
-    currentId: 1,
+    currentIndex: 0,
     fullData: "",
     dataToDisplay: "",
     allData: "",
@@ -57,7 +57,7 @@ class Profile extends Component {
   };
 
   onNext = () => {
-    if (this.state.currentId < this.state.fullData.length - 1) {
+    if (this.state.currentIndex < this.state.fullData.length) {
       // console.log(this.state.dataToDisplay.basePrice);
       // if (this.state.dataToDisplay.basePrice > 100) {
       //   const updatedValue = {
@@ -87,18 +87,18 @@ class Profile extends Component {
       // }
 
       this.setState({
-        dataToDisplay: this.state.fullData[this.state.currentId + 1],
-        currentId: this.state.currentId + 1,
+        dataToDisplay: this.state.fullData[this.state.currentIndex],
+        currentIndex: this.state.currentIndex + 1,
         isSold: false
       });
     }
   };
 
   onPrevious = () => {
-    if (this.state.currentId >= 1) {
+    if (this.state.currentIndex > 0) {
       this.setState({
-        dataToDisplay: this.state.fullData[this.state.currentId - 1],
-        currentId: this.state.currentId - 1,
+        dataToDisplay: this.state.fullData[this.state.currentIndex - 1],
+        currentIndex: this.state.currentIndex - 1,
         isSold: false
       });
     }
