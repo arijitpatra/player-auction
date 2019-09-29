@@ -2,7 +2,8 @@ export const allTeams = [
   {
     id: 1,
     name: "One",
-    imgSrc: "https://brandmark.io/logo-rank/random/pepsi.png"
+    imgSrc:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuh3br5fzL6bNCZYeqM2GoEgYNet65XrVSIWDhP3DK6CLkfABZ"
   },
   {
     id: 2,

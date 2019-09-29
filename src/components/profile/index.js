@@ -26,9 +26,9 @@ class Profile extends Component {
     fetch("./backend.json")
       .then(response => response.json())
       .then(data => {
-        const unsold = data.filter(item => {
+        const filteredData = data.filter(item => {
           if (this.state.isUnsoldSelected) {
-            if (item.isSold === false) {
+            if (item.isSold === false && item.isPassed === false) {
               return item;
             }
           } else {
@@ -38,17 +38,17 @@ class Profile extends Component {
           }
         });
 
-        // for (let i = 0; i < unsold.length - 1; i++) {
-        //   let j = i + Math.floor(Math.random() * (unsold.length - i));
-        //   const temp = unsold[j];
-        //   unsold[j] = unsold[i];
-        //   unsold[i] = temp;
-        // }
+        for (let i = 0; i < filteredData.length - 1; i++) {
+          let j = i + Math.floor(Math.random() * (filteredData.length - i));
+          const temp = filteredData[j];
+          filteredData[j] = filteredData[i];
+          filteredData[i] = temp;
+        }
 
         this.setState({
           allData: data,
-          fullData: unsold,
-          dataToDisplay: unsold[0]
+          fullData: filteredData,
+          dataToDisplay: filteredData[0]
         });
       })
       .catch(err => {
@@ -58,33 +58,39 @@ class Profile extends Component {
 
   onNext = () => {
     if (this.state.currentIndex < this.state.fullData.length) {
-      // console.log(this.state.dataToDisplay.basePrice);
-      // if (this.state.dataToDisplay.basePrice > 100) {
-      //   const updatedValue = {
-      //     ...this.state.dataToDisplay,
-      //     basePrice: this.state.dataToDisplay.basePrice - 100,
-      //     currentPrice: this.state.dataToDisplay.currentPrice - 100
-      //   };
-      //   this.setState({ dataToDisplay: updatedValue });
+      console.log(this.state.dataToDisplay.basePrice);
+      if (
+        this.state.dataToDisplay.basePrice > 100 &&
+        this.state.isUnsoldSelected === true
+      ) {
+        const updatedValue = {
+          ...this.state.dataToDisplay,
+          basePrice: this.state.dataToDisplay.basePrice - 100,
+          currentPrice: this.state.dataToDisplay.currentPrice - 100
+        };
+        this.setState({
+          dataToDisplay: updatedValue,
+          currentIndex: this.state.currentIndex + 1
+        });
 
-      //   const updatedJson = this.state.allData.map(item => {
-      //     if (item.id === this.state.dataToDisplay.id) {
-      //       return (item = updatedValue);
-      //     } else {
-      //       return item;
-      //     }
-      //   });
+        const updatedJson = this.state.allData.map(item => {
+          if (item.id === this.state.dataToDisplay.id) {
+            return (item = updatedValue);
+          } else {
+            return item;
+          }
+        });
 
-      //   setTimeout(() => {
-      //     const fileData = JSON.stringify(updatedJson);
-      //     const blob = new Blob([fileData], { type: "text/plain" });
-      //     const url = URL.createObjectURL(blob);
-      //     const link = document.createElement("a");
-      //     link.download = "backend.json";
-      //     link.href = url;
-      //     link.click();
-      //   }, 500);
-      // }
+        setTimeout(() => {
+          const fileData = JSON.stringify(updatedJson);
+          const blob = new Blob([fileData], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.download = "backend.json";
+          link.href = url;
+          link.click();
+        }, 500);
+      }
 
       this.setState({
         dataToDisplay: this.state.fullData[this.state.currentIndex],
