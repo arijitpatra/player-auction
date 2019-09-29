@@ -6,8 +6,8 @@
     "flat": "Y-004",
     "type": "All Rounder",
     "lastYear": true,
-    "isSold": true,
-    "isPassed": true,
+    "isSold": false,
+    "isPassed": false,
     "basePrice": 100,
     "currentPrice": 100,
     "teamSoldTo": "Eight",
@@ -50,8 +50,8 @@
     "lastYear": true,
     "isSold": false,
     "isPassed": false,
-    "basePrice": 400,
-    "currentPrice": 400,
+    "basePrice": 300,
+    "currentPrice": 300,
     "teamSoldTo": "",
     "teamIcon": ""
   },
@@ -64,8 +64,8 @@
     "lastYear": true,
     "isSold": false,
     "isPassed": false,
-    "basePrice": 300,
-    "currentPrice": 300,
+    "basePrice": 200,
+    "currentPrice": 200,
     "teamSoldTo": "",
     "teamIcon": ""
   }

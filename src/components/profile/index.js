@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 import { allTeams } from "../../appConstants";
+import fire from "../../fire";
 import "./index.scss";
 
 class Profile extends Component {
+  constructor() {
+    super();
+    this.db = fire.firestore();
+  }
+
   state = {
     currentIndex: 0,
     fullData: "",
@@ -54,6 +60,40 @@ class Profile extends Component {
       .catch(err => {
         console.log("Error Reading data " + err);
       });
+
+    // this.db
+    //   .collection("players")
+    //   .get()
+    //   .then(querySnapshot => {
+    //     const data = [];
+    //     querySnapshot.forEach(doc => {
+    //       data.push(doc.data());
+    //     });
+    //     const filteredData = data.filter(item => {
+    //       if (this.state.isUnsoldSelected) {
+    //         if (item.isSold === false && item.isPassed === false) {
+    //           return item;
+    //         }
+    //       } else {
+    //         if (item.isSold === true) {
+    //           return item;
+    //         }
+    //       }
+    //     });
+
+    //     for (let i = 0; i < filteredData.length - 1; i++) {
+    //       let j = i + Math.floor(Math.random() * (filteredData.length - i));
+    //       const temp = filteredData[j];
+    //       filteredData[j] = filteredData[i];
+    //       filteredData[i] = temp;
+    //     }
+
+    //     this.setState({
+    //       allData: data,
+    //       fullData: filteredData,
+    //       dataToDisplay: filteredData[0]
+    //     });
+    //   });
   };
 
   onNext = () => {
@@ -146,6 +186,16 @@ class Profile extends Component {
       link.href = url;
       link.click();
     }, 1500);
+
+    // this.db
+    //   .collection("players")
+    //   .add(updatedValue)
+    //   .then(function(docRef) {
+    //     console.log("Document written with ID: ", docRef.id);
+    //   })
+    //   .catch(function(error) {
+    //     console.error("Error adding document: ", error);
+    //   });
   };
 
   render() {
