@@ -66,7 +66,8 @@ class Profile extends Component {
         const updatedValue = {
           ...this.state.dataToDisplay,
           basePrice: this.state.dataToDisplay.basePrice - 100,
-          currentPrice: this.state.dataToDisplay.currentPrice - 100
+          currentPrice: this.state.dataToDisplay.currentPrice - 100,
+          isPassed: true
         };
         this.setState({
           dataToDisplay: updatedValue,
@@ -123,7 +124,8 @@ class Profile extends Component {
       ...this.state.dataToDisplay,
       teamIcon: teamObject.imgSrc,
       teamSoldTo: teamObject.name,
-      isSold: true
+      isSold: true,
+      isPassed: true
     };
     this.setState({ dataToDisplay: updatedValue, isSold: true });
 
@@ -152,22 +154,6 @@ class Profile extends Component {
       <section className="profile">
         <section className="action">
           <div>
-            {/* <div className="team-icons-header-container">
-              {allTeams.map(team => {
-                return (
-                  <div className="header-tags">
-                    <img
-                      key={team.id}
-                      className="team-icons-header"
-                      title={team.name}
-                      src={team.imgSrc}
-                      onClick={() => this.onTeamSelection(team)}
-                    />
-                    <span>₹ 10000</span>
-                  </div>
-                );
-              })}
-            </div> */}
             <div className="filter">
               <div
                 className={
