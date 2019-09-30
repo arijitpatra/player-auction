@@ -267,15 +267,15 @@ class Profile extends Component {
                   : ""}
               </div>
               <div className="move" onClick={() => this.passedToUnsold()}>
-                <i className="fa fa-bolt" aria-hidden="true"></i> Move parked
-                players to unsold{" "}
+                <i className="fa fa-bolt" aria-hidden="true"></i> Move{" "}
                 {allData
-                  ? `(${
+                  ? `${
                       allData.filter(
                         i => i.isSold === false && i.isPassed === true
                       ).length
-                    })`
-                  : ""}
+                    }`
+                  : ""}{" "}
+                parked player to unsold{" "}
               </div>
             </div>
           </div>
