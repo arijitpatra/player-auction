@@ -30,38 +30,6 @@ class Profile extends Component {
   }
 
   fetchData = () => {
-    // fetch("./backend.json")
-    // .then(response => response.json())
-    // .then(data => {
-    // const filteredData = data.filter(item => {
-    // if (this.state.isUnsoldSelected) {
-    // if (item.isSold === false && item.isPassed === false) {
-    // return item;
-    // }
-    // } else {
-    // if (item.isSold === true) {
-    // return item;
-    // }
-    // }
-    // });
-
-    // for (let i = 0; i < filteredData.length - 1; i++) {
-    // let j = i + Math.floor(Math.random() * (filteredData.length - i));
-    // const temp = filteredData[j];
-    // filteredData[j] = filteredData[i];
-    // filteredData[i] = temp;
-    // }
-
-    // this.setState({
-    // allData: data,
-    // fullData: filteredData,
-    // dataToDisplay: filteredData[0]
-    // });
-    // })
-    // .catch(err => {
-    // console.log("Error Reading data " + err);
-    // });
-
     this.db
       .collection("players")
       .get()
@@ -99,57 +67,12 @@ class Profile extends Component {
 
   onNext = () => {
     if (this.state.currentIndex < this.state.fullData.length) {
-      if (
-        this.state.dataToDisplay.basePrice > 100 &&
-        this.state.isUnsoldSelected === true
-      ) {
-        const updatedValue = {
-          ...this.state.dataToDisplay,
-          basePrice: this.state.dataToDisplay.basePrice - 100,
-          currentPrice: this.state.dataToDisplay.currentPrice - 100,
-          isPassed: true
-        };
-        // this.setState({
-        // dataToDisplay: updatedValue,
-        // currentIndex: this.state.currentIndex + 1
-        // });
-
-        // const updatedJson = this.state.allData.map(item => {
-        // if (item.id === this.state.dataToDisplay.id) {
-        // return (item = updatedValue);
-        // } else {
-        // return item;
-        // }
-        // });
-
-        // setTimeout(() => {
-        // const fileData = JSON.stringify(updatedJson);
-        // const blob = new Blob([fileData], { type: "text/plain" });
-        // const url = URL.createObjectURL(blob);
-        // const link = document.createElement("a");
-        // link.download = "backend.json";
-        // link.href = url;
-        // link.click();
-        // }, 500);
-        const self = this;
-        this.db
-          .collection("players")
-          .doc(this.state.dataToDisplay.id.toString())
-          .set(updatedValue, { merge: true })
-          .then(function(docRef) {
-            self.fetchData();
-          })
-          .catch(function(error) {
-            console.error("Error adding document: ", error);
-          });
-      } else if (
-        this.state.dataToDisplay.basePrice <= 100 &&
-        this.state.isUnsoldSelected === true
-      ) {
+      if (this.state.isUnsoldSelected === true) {
         const updatedValue = {
           ...this.state.dataToDisplay,
           isPassed: true
         };
+
         const self = this;
         this.db
           .collection("players")
@@ -164,12 +87,6 @@ class Profile extends Component {
       }
 
       this.fetchData();
-      this.setState({ a: 1 });
-      // this.setState({
-      // dataToDisplay: this.state.fullData[this.state.currentIndex],
-      // currentIndex: this.state.currentIndex + 1,
-      // isSold: false
-      // });
     }
   };
 
@@ -191,6 +108,17 @@ class Profile extends Component {
     this.setState({ dataToDisplay: updatedValue });
   };
 
+  onSubtract = value => {
+    const subtractedValue = this.state.dataToDisplay.currentPrice - value;
+    if (subtractedValue >= this.state.dataToDisplay.basePrice) {
+      const updatedValue = {
+        ...this.state.dataToDisplay,
+        currentPrice: subtractedValue
+      };
+      this.setState({ dataToDisplay: updatedValue });
+    }
+  };
+
   onTeamSelection = teamObject => {
     const updatedValue = {
       ...this.state.dataToDisplay,
@@ -199,25 +127,7 @@ class Profile extends Component {
       isSold: true,
       isPassed: true
     };
-    // this.setState({ dataToDisplay: updatedValue, isSold: true });
 
-    // const updatedJson = this.state.allData.map(item => {
-    // if (item.id === this.state.dataToDisplay.id) {
-    // return (item = updatedValue);
-    // } else {
-    // return item;
-    // }
-    // });
-
-    // setTimeout(() => {
-    // const fileData = JSON.stringify(updatedJson);
-    // const blob = new Blob([fileData], { type: "text/plain" });
-    // const url = URL.createObjectURL(blob);
-    // const link = document.createElement("a");
-    // link.download = "backend.json";
-    // link.href = url;
-    // link.click();
-    // }, 1500);
     const self = this;
     this.db
       .collection("players")
@@ -225,7 +135,6 @@ class Profile extends Component {
       .set(updatedValue, { merge: true })
       .then(function(docRef) {
         self.fetchData();
-        this.setState({ a: 1 });
       })
       .catch(function(error) {
         console.error("Error adding document: ", error);
@@ -249,34 +158,71 @@ class Profile extends Component {
   };
 
   passedToUnsold = () => {
-    const self = this;
-    this.state.allData.forEach(i => {
-      if (i.isSold === false && i.isPassed === true) {
-        const updatedValue = {
-          ...i,
-          isPassed: false
-        };
+    if (this.state.allData) {
+      const dataLength = this.state.allData.filter(
+        i => i.isSold === false && i.isPassed === true
+      ).length;
 
-        this.db
-          .collection("players")
-          .doc(i.id.toString())
-          .set(updatedValue, { merge: true })
-          .then(function(docRef) {})
-          .catch(function(error) {
-            console.error("Error adding document: ", error);
-          });
+      if (dataLength > 0) {
+        this.state.allData.forEach(i => {
+          if (i.isSold === false && i.isPassed === true) {
+            const updatedValue = {
+              ...i,
+              isPassed: false
+            };
+
+            this.db
+              .collection("players")
+              .doc(i.id.toString())
+              .set(updatedValue, { merge: true })
+              .then(function(docRef) {})
+              .catch(function(error) {
+                console.error("Error adding document: ", error);
+              });
+          }
+        });
+        this.fetchData();
       }
-    });
-    this.fetchData();
-    this.setState({ a: 1 });
+    }
   };
 
   viewTeams = () => {
     this.setState({ isViewTeamsEnabled: !this.state.isViewTeamsEnabled });
   };
 
+  createTeamDetails = () => {
+    let arr = [];
+    this.db
+      .collection("players")
+      .get()
+      .then(querySnapshot => {
+        const data = [];
+        querySnapshot.forEach(doc => {
+          data.push(doc.data());
+        });
+        arr = allTeams.map(team => {
+          return (
+            <section>
+              <div>
+                {team.imgSrc} {team.name}
+              </div>
+            </section>
+          );
+        });
+      });
+    console.log(arr);
+    return arr;
+  };
+
   render() {
-    const { dataToDisplay } = this.state;
+    const {
+      dataToDisplay,
+      isUnsoldSelected,
+      allData,
+      isViewTeamsEnabled,
+      isSold
+    } = this.state;
+    const teamsDetails = this.createTeamDetails();
     return (
       <section className="profile">
         <section className="action">
@@ -284,16 +230,18 @@ class Profile extends Component {
             <div className="filter">
               <div
                 className={
-                  this.state.isUnsoldSelected === false && dataToDisplay.isSold
+                  isUnsoldSelected === false &&
+                  dataToDisplay &&
+                  dataToDisplay.isSold
                     ? "active-filter sold"
                     : "sold"
                 }
                 onClick={() => this.setState({ isUnsoldSelected: false })}
               >
                 <i className="fa fa-filter" aria-hidden="true"></i> SOLD{" "}
-                {this.state.allData
+                {allData
                   ? `(${
-                      this.state.allData.filter(
+                      allData.filter(
                         i => i.isSold === true && i.isPassed === true
                       ).length
                     })`
@@ -301,16 +249,18 @@ class Profile extends Component {
               </div>
               <div
                 className={
-                  this.state.isUnsoldSelected === true && !dataToDisplay.isSold
+                  isUnsoldSelected === true &&
+                  dataToDisplay &&
+                  !dataToDisplay.isSold
                     ? "active-filter unsold"
                     : "unsold"
                 }
                 onClick={() => this.setState({ isUnsoldSelected: true })}
               >
                 <i className="fa fa-filter" aria-hidden="true"></i> UNSOLD{" "}
-                {this.state.allData
+                {allData
                   ? `(${
-                      this.state.allData.filter(
+                      allData.filter(
                         i => i.isSold === false && i.isPassed === false
                       ).length
                     })`
@@ -319,156 +269,211 @@ class Profile extends Component {
               <div className="move" onClick={() => this.passedToUnsold()}>
                 <i className="fa fa-bolt" aria-hidden="true"></i> Move parked
                 players to unsold{" "}
-                {this.state.allData
+                {allData
                   ? `(${
-                      this.state.allData.filter(
+                      allData.filter(
                         i => i.isSold === false && i.isPassed === true
                       ).length
                     })`
                   : ""}
               </div>
-              <div className="move" onClick={() => this.viewTeams()}>
-                <i className="fa fa-eye" aria-hidden="true"></i> View teams
-              </div>
-              {/* <div className="move" onClick={() => this.trackExpenses()}>
-                <i className="fa fa-usd" aria-hidden="true"></i> Track Expenses
-              </div> */}
             </div>
           </div>
         </section>
-        <section className="card">
-          <section className="pricing">
-            {this.state.isUnsoldSelected === false ? (
-              <div className="pricing-blocks pricing-blocks-centered">
-                <div className="label">Final Price</div>
-                <div className="value">
-                  <span className="rupee-icon">₹</span>
-                  {dataToDisplay.currentPrice}
-                </div>
-              </div>
-            ) : (
-              <React.Fragment>
-                <div className="pricing-blocks">
-                  <div className="label">Base Price</div>
-                  <div className="value">
-                    <span className="rupee-icon">₹</span>
-                    {dataToDisplay.basePrice}
-                  </div>
-                </div>
-                <div className="pricing-blocks">
-                  <div className="label">Current Price</div>
+        {dataToDisplay ? (
+          <section className="card">
+            <section className="pricing">
+              {isUnsoldSelected === false ? (
+                <div className="pricing-blocks pricing-blocks-centered">
+                  <div className="label">Final Price</div>
                   <div className="value">
                     <span className="rupee-icon">₹</span>
                     {dataToDisplay.currentPrice}
                   </div>
                 </div>
-              </React.Fragment>
-            )}
-          </section>
-          <div className="change-player">
-            {this.state.isUnsoldSelected === false ? (
-              <div
-                className="previous"
-                onClick={() => this.onPrevious()}
-                title="Previous"
-              >
-                <i className="fa fa-arrow-left" aria-hidden="true"></i>
+              ) : (
+                <React.Fragment>
+                  <div className="pricing-blocks">
+                    <div className="label">Base Price</div>
+                    <div className="value">
+                      <span className="rupee-icon">₹</span>
+                      {dataToDisplay.basePrice}
+                    </div>
+                  </div>
+                  <div className="pricing-blocks">
+                    <div className="label">Current Price</div>
+                    <div className="value">
+                      <span className="rupee-icon">₹</span>
+                      {dataToDisplay.currentPrice}
+                    </div>
+                  </div>
+                </React.Fragment>
+              )}
+            </section>
+            <div className="change-player">
+              {isUnsoldSelected === false ? (
+                <div
+                  className="previous"
+                  onClick={() => this.onPrevious()}
+                  title="Previous"
+                >
+                  <i className="fa fa-arrow-left" aria-hidden="true"></i>
+                </div>
+              ) : (
+                ""
+              )}
+              <div className="next" onClick={() => this.onNext()} title="Next">
+                <i className="fa fa-arrow-right" aria-hidden="true"></i>
               </div>
-            ) : (
-              ""
-            )}
-            <div className="next" onClick={() => this.onNext()} title="Next">
-              <i className="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
-          </div>
-          <img src={dataToDisplay.photoPath} />
-          <div>
-            <div className="player-name">
-              <div className="label">PLAYER</div>
-              <div className="value value-name">
-                {dataToDisplay.name}
-                {this.state.isSold === true ? (
-                  <img
-                    className="sold"
-                    src={
-                      "https://freepngimg.com/thumb/sold_out/1-2-sold-out-png-picture-thumb.png"
-                    }
-                  ></img>
-                ) : (
-                  ""
-                )}
-                {dataToDisplay.isSold === true ? (
-                  <span>
+            <img src={dataToDisplay.photoPath} />
+            <div>
+              <div className="player-name">
+                <div className="label">PLAYER</div>
+                <div className="value value-name">
+                  {dataToDisplay.name}
+                  {isSold === true ? (
                     <img
                       className="sold"
                       src={
                         "https://freepngimg.com/thumb/sold_out/1-2-sold-out-png-picture-thumb.png"
                       }
                     ></img>
-                    <img
-                      className="sold-team"
-                      src={dataToDisplay.teamIcon}
-                    ></img>
-                  </span>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="other-info">
-                <div className="info-blocks">
-                  <div className="label">FLAT</div>
-                  <div className="value">{dataToDisplay.flat}</div>
+                  ) : (
+                    ""
+                  )}
+                  {dataToDisplay.isSold === true ? (
+                    <span>
+                      <img
+                        className="sold"
+                        src={
+                          "https://freepngimg.com/thumb/sold_out/1-2-sold-out-png-picture-thumb.png"
+                        }
+                      ></img>
+                      <img
+                        className="sold-team"
+                        src={dataToDisplay.teamIcon}
+                      ></img>
+                    </span>
+                  ) : (
+                    ""
+                  )}
                 </div>
+                <div className="other-info">
+                  <div className="info-blocks">
+                    <div className="label">FLAT</div>
+                    <div className="value">{dataToDisplay.flat}</div>
+                  </div>
 
-                <div className="info-blocks">
-                  <div className="label">TYPE</div>
-                  <div className="value">{dataToDisplay.type}</div>
-                </div>
+                  <div className="info-blocks">
+                    <div className="label">TYPE</div>
+                    <div className="value">{dataToDisplay.type}</div>
+                  </div>
 
-                <div className="info-blocks">
-                  <div className="label">LAST YEAR HISTORY</div>
-                  <div className="value">
-                    {dataToDisplay.lastYear ? "Yes" : "No"}
+                  <div className="info-blocks">
+                    <div className="label">LAST YEAR HISTORY</div>
+                    <div className="value">
+                      {dataToDisplay.lastYear ? "Yes" : "No"}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {dataToDisplay.isSold ? (
-            ""
-          ) : (
-            <section className="teams">
-              {allTeams.map(team => {
-                return (
-                  <img
-                    key={team.id}
-                    className="team-icons"
-                    title={team.name}
-                    src={team.imgSrc}
-                    onClick={() => this.onTeamSelection(team)}
-                  />
-                );
-              })}
-              <div className="increment-button" onClick={() => this.onAdd(100)}>
-                ₹ 100
-              </div>
-              <div className="increment-button" onClick={() => this.onAdd(200)}>
-                ₹ 200
-              </div>
-              <div className="increment-button" onClick={() => this.onAdd(300)}>
-                ₹ 300
-              </div>
-            </section>
-          )}
-        </section>
-        {this.state.isViewTeamsEnabled ? (
-          <div className="modal-like" onClick={() => this.viewTeams()}>
-            Teams here
+            {dataToDisplay.isSold ? (
+              ""
+            ) : (
+              <section className="teams">
+                {allTeams.map(team => {
+                  return (
+                    <img
+                      key={team.id}
+                      className="team-icons"
+                      title={team.name}
+                      src={team.imgSrc}
+                      onClick={() => this.onTeamSelection(team)}
+                    />
+                  );
+                })}
+                <div
+                  className="increment-button view-team"
+                  onClick={() => this.viewTeams()}
+                >
+                  <i className="fa fa-eye" aria-hidden="true"></i> View teams
+                </div>
+                <div className="minus-container">
+                  <div
+                    className="increment-button"
+                    onClick={() => this.onAdd(100)}
+                  >
+                    ₹ 100
+                  </div>
+                  <i
+                    className="fa fa-minus-circle minus"
+                    aria-hidden="true"
+                    onClick={() => this.onSubtract(100)}
+                  ></i>
+                </div>
+                <div className="minus-container">
+                  <div
+                    className="increment-button"
+                    onClick={() => this.onAdd(200)}
+                  >
+                    ₹ 200
+                  </div>
+                  <i
+                    className="fa fa-minus-circle minus"
+                    aria-hidden="true"
+                    onClick={() => this.onSubtract(200)}
+                  ></i>
+                </div>
+              </section>
+            )}
+          </section>
+        ) : (
+          <section className="no-data transition">
+            <i className="fa fa-check-circle scale" aria-hidden="true"></i> You
+            are all done, nothing here!
+            <p>Navigate to appropriate filter for data</p>
+          </section>
+        )}
+
+        {isViewTeamsEnabled ? (
+          <div
+            className="modal-like"
+            title="Click anywhere to close"
+            onClick={() => this.viewTeams()}
+          >
+            {allTeams.map(team => {
+              return (
+                <section key={team.name} title={team.name}>
+                  <div>
+                    <img src={team.imgSrc}></img>
+                    <div>
+                      <div>{team.name}</div>
+                      <div className="balance">₹ 8000 remaining </div>
+                    </div>
+                  </div>
+                  <p>
+                    <p>1. Arijit Patra</p>
+                    <p>2. Arijit Patra</p>
+                    <p>3. Arijit Patra</p>
+                    <p>4. Arijit Patra</p>
+                    <p>5. Arijit Patra</p>
+                    <p>6. Arijit Patra</p>
+                    <p>7. Arijit Patra</p>
+                    <p>8. Arijit Patra</p>
+                  </p>
+                </section>
+              );
+            })}
           </div>
         ) : (
           ""
         )}
+        <section className="credit">
+          designed and developed by <span>Arijit Patra</span>
+        </section>
       </section>
     );
   }

@@ -1,7 +1,6 @@
 .profile {
   display: flex;
   margin-top: 3%;
-  margin-left: 1rem;
   justify-content: center;
 
   .filter {
@@ -123,6 +122,17 @@
         margin-top: 0;
       }
 
+      .minus-container {
+        position: relative;
+      }
+      .minus {
+        position: absolute;
+        right: -25px;
+        bottom: 20px;
+        color: #ce0c15;
+        cursor: pointer;
+      }
+
       .increment-button {
         padding: 1rem;
         text-align: center;
@@ -132,6 +142,10 @@
         border: 2px solid #04ad5f;
         font-size: 16px;
         user-select: none;
+
+        &.view-team:before {
+          content: "";
+        }
         &:hover {
           border: none;
           cursor: pointer;
@@ -148,7 +162,7 @@
 
   .pricing {
     position: absolute;
-    bottom: -10rem;
+    bottom: -9rem;
     display: flex;
     left: 6rem;
 
@@ -266,10 +280,99 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: black;
+    background-image: linear-gradient(
+      to right,
+      #ff8177 0%,
+      #ff867a 0%,
+      #ff8c7f 21%,
+      #f99185 52%,
+      #cf556c 78%,
+      #b12a5b 100%
+    );
     color: white;
     top: 0;
     z-index: 99999999999;
     left: 0;
+    flex-flow: wrap;
+
+    section {
+      &:hover {
+        box-shadow: 0px 0px 15px #555555;
+      }
+      padding: 1rem;
+      margin: 1rem;
+      width: calc(100vw / 6);
+      background: white;
+      color: #31393f;
+      font-size: 12px;
+      height: 235px;
+      display: inline-flex;
+      border-radius: 5px;
+      box-shadow: 0px 0px 5px #888888;
+      > div {
+        position: absolute;
+        vertical-align: middle;
+        display: flex;
+        align-items: end;
+        font-weight: bold;
+      }
+      p {
+        font-size: 12px;
+        margin-top: 55px;
+        p {
+          margin: 7.5px;
+          color: #555;
+        }
+      }
+    }
+
+    .balance {
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 20px;
+      color: #888;
+    }
+
+    img {
+      width: 25px;
+      height: 25px;
+      border: none;
+      margin-right: 10px;
+    }
+  }
+
+  .no-data {
+    font-size: 21px;
+    color: #9a9a9a;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    top: 0;
+    justify-content: center;
+    align-items: center;
+    line-height: 3rem;
+    z-index: -1;
+    i {
+      margin-right: 1rem;
+      font-size: 30px;
+      color: #04ad5f;
+    }
+    p {
+      margin: 0;
+      line-height: 1;
+      font-size: 14px;
+    }
+  }
+
+  .credit {
+    font-size: 9px;
+    position: fixed;
+    bottom: 0.25rem;
+    color: #888;
+    span {
+      font-family: "Homemade Apple", cursive;
+      margin-left: 3px;
+    }
   }
 }

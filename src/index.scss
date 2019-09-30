@@ -1,3 +1,33 @@
 body {
   margin: 0;
+  user-select: none;
+}
+
+.transition {
+  animation: fading 0.35s ease-in;
+}
+
+.scale {
+  animation: scaling 1s ease-in 0.1s;
+}
+
+@keyframes fading {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scaling {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
