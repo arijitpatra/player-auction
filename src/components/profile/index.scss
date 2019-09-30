@@ -8,6 +8,20 @@
     display: flex;
     margin: 0.5rem 0;
 
+    .move {
+      padding: 0.5rem;
+      font-size: 12px;
+      color: #04ad5f;
+      border: 2px solid #04ad5f;
+      margin: 0 0.5rem;
+    }
+
+    .move:hover {
+      color: white;
+      background: #04ad5f;
+      cursor: pointer;
+    }
+
     .sold,
     .unsold {
       padding: 0.5rem;

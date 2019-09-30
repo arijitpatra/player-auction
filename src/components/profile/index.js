@@ -29,9 +29,46 @@ class Profile extends Component {
   }
 
   fetchData = () => {
-    fetch("./backend.json")
-      .then(response => response.json())
-      .then(data => {
+    // fetch("./backend.json")
+    // .then(response => response.json())
+    // .then(data => {
+    // const filteredData = data.filter(item => {
+    // if (this.state.isUnsoldSelected) {
+    // if (item.isSold === false && item.isPassed === false) {
+    // return item;
+    // }
+    // } else {
+    // if (item.isSold === true) {
+    // return item;
+    // }
+    // }
+    // });
+
+    // for (let i = 0; i < filteredData.length - 1; i++) {
+    // let j = i + Math.floor(Math.random() * (filteredData.length - i));
+    // const temp = filteredData[j];
+    // filteredData[j] = filteredData[i];
+    // filteredData[i] = temp;
+    // }
+
+    // this.setState({
+    // allData: data,
+    // fullData: filteredData,
+    // dataToDisplay: filteredData[0]
+    // });
+    // })
+    // .catch(err => {
+    // console.log("Error Reading data " + err);
+    // });
+
+    this.db
+      .collection("players")
+      .get()
+      .then(querySnapshot => {
+        const data = [];
+        querySnapshot.forEach(doc => {
+          data.push(doc.data());
+        });
         const filteredData = data.filter(item => {
           if (this.state.isUnsoldSelected) {
             if (item.isSold === false && item.isPassed === false) {
@@ -56,49 +93,11 @@ class Profile extends Component {
           fullData: filteredData,
           dataToDisplay: filteredData[0]
         });
-      })
-      .catch(err => {
-        console.log("Error Reading data " + err);
       });
-
-    // this.db
-    //   .collection("players")
-    //   .get()
-    //   .then(querySnapshot => {
-    //     const data = [];
-    //     querySnapshot.forEach(doc => {
-    //       data.push(doc.data());
-    //     });
-    //     const filteredData = data.filter(item => {
-    //       if (this.state.isUnsoldSelected) {
-    //         if (item.isSold === false && item.isPassed === false) {
-    //           return item;
-    //         }
-    //       } else {
-    //         if (item.isSold === true) {
-    //           return item;
-    //         }
-    //       }
-    //     });
-
-    //     for (let i = 0; i < filteredData.length - 1; i++) {
-    //       let j = i + Math.floor(Math.random() * (filteredData.length - i));
-    //       const temp = filteredData[j];
-    //       filteredData[j] = filteredData[i];
-    //       filteredData[i] = temp;
-    //     }
-
-    //     this.setState({
-    //       allData: data,
-    //       fullData: filteredData,
-    //       dataToDisplay: filteredData[0]
-    //     });
-    //   });
   };
 
   onNext = () => {
     if (this.state.currentIndex < this.state.fullData.length) {
-      console.log(this.state.dataToDisplay.basePrice);
       if (
         this.state.dataToDisplay.basePrice > 100 &&
         this.state.isUnsoldSelected === true
@@ -109,35 +108,67 @@ class Profile extends Component {
           currentPrice: this.state.dataToDisplay.currentPrice - 100,
           isPassed: true
         };
-        this.setState({
-          dataToDisplay: updatedValue,
-          currentIndex: this.state.currentIndex + 1
-        });
+        // this.setState({
+        // dataToDisplay: updatedValue,
+        // currentIndex: this.state.currentIndex + 1
+        // });
 
-        const updatedJson = this.state.allData.map(item => {
-          if (item.id === this.state.dataToDisplay.id) {
-            return (item = updatedValue);
-          } else {
-            return item;
-          }
-        });
+        // const updatedJson = this.state.allData.map(item => {
+        // if (item.id === this.state.dataToDisplay.id) {
+        // return (item = updatedValue);
+        // } else {
+        // return item;
+        // }
+        // });
 
-        setTimeout(() => {
-          const fileData = JSON.stringify(updatedJson);
-          const blob = new Blob([fileData], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.download = "backend.json";
-          link.href = url;
-          link.click();
-        }, 500);
+        // setTimeout(() => {
+        // const fileData = JSON.stringify(updatedJson);
+        // const blob = new Blob([fileData], { type: "text/plain" });
+        // const url = URL.createObjectURL(blob);
+        // const link = document.createElement("a");
+        // link.download = "backend.json";
+        // link.href = url;
+        // link.click();
+        // }, 500);
+        const self = this;
+        this.db
+          .collection("players")
+          .doc(this.state.dataToDisplay.id.toString())
+          .set(updatedValue, { merge: true })
+          .then(function(docRef) {
+            self.fetchData();
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+      } else if (
+        this.state.dataToDisplay.basePrice <= 100 &&
+        this.state.isUnsoldSelected === true
+      ) {
+        const updatedValue = {
+          ...this.state.dataToDisplay,
+          isPassed: true
+        };
+        const self = this;
+        this.db
+          .collection("players")
+          .doc(this.state.dataToDisplay.id.toString())
+          .set(updatedValue, { merge: true })
+          .then(function(docRef) {
+            self.fetchData();
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
       }
 
-      this.setState({
-        dataToDisplay: this.state.fullData[this.state.currentIndex],
-        currentIndex: this.state.currentIndex + 1,
-        isSold: false
-      });
+      this.fetchData();
+      this.setState({ a: 1 });
+      // this.setState({
+      // dataToDisplay: this.state.fullData[this.state.currentIndex],
+      // currentIndex: this.state.currentIndex + 1,
+      // isSold: false
+      // });
     }
   };
 
@@ -167,35 +198,76 @@ class Profile extends Component {
       isSold: true,
       isPassed: true
     };
-    this.setState({ dataToDisplay: updatedValue, isSold: true });
+    // this.setState({ dataToDisplay: updatedValue, isSold: true });
 
-    const updatedJson = this.state.allData.map(item => {
-      if (item.id === this.state.dataToDisplay.id) {
-        return (item = updatedValue);
-      } else {
-        return item;
+    // const updatedJson = this.state.allData.map(item => {
+    // if (item.id === this.state.dataToDisplay.id) {
+    // return (item = updatedValue);
+    // } else {
+    // return item;
+    // }
+    // });
+
+    // setTimeout(() => {
+    // const fileData = JSON.stringify(updatedJson);
+    // const blob = new Blob([fileData], { type: "text/plain" });
+    // const url = URL.createObjectURL(blob);
+    // const link = document.createElement("a");
+    // link.download = "backend.json";
+    // link.href = url;
+    // link.click();
+    // }, 1500);
+    const self = this;
+    this.db
+      .collection("players")
+      .doc(this.state.dataToDisplay.id.toString())
+      .set(updatedValue, { merge: true })
+      .then(function(docRef) {
+        self.fetchData();
+        this.setState({ a: 1 });
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      });
+
+    // const x = [{ "id": 1, "photoPath": "https://images.unsplash.com/photo-1569596082827-c5e8990496cb?ixlib=rb-1.2.1&ix'id'=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80", "name": "Sachin", "flat": "Y-004", "type": "All Rounder", "lastYear": true, "isSold": true, "isPassed": true, "basePrice": 100, "currentPrice": 100, "teamSoldTo": "Eight", "teamIcon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1wwNFjsmptYthTZl19NLdql9XpOlmCHCsvgePJChue3OGeR_sRg" }, { "id": 2, "photoPath": "https://images.unsplash.com/photo-1569609782629-8e323d62582e?ixlib=rb-1.2.1&ix'id'=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=387&q=80", "name": "Avishek", "flat": "L-604", "type": "All Rounder", "lastYear": true, "isSold": true, "isPassed": true, "basePrice": 200, "currentPrice": 200, "teamSoldTo": "Five", "teamIcon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyGwkqbnJ3Y6aEu7PhCj7U6xcgutOIre7gBqNO5BrXz1Cmj1UMgw" }, { "id": 3, "photoPath": "https://images.unsplash.com/photo-1569606978636-9e7967d06a21?ixlib=rb-1.2.1&ix'id'=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80", "name": "Mayank", "flat": "L-902", "type": "Batsman", "lastYear": true, "isSold": false, "isPassed": false, "basePrice": 100, "currentPrice": 100, "teamSoldTo": "", "teamIcon": "" }, { "id": 4, "photoPath": "https://images.unsplash.com/photo-1569601841754-63b6366198ce?ixlib=rb-1.2.1&ix'id'=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80", "name": "Shubham", "flat": "L-303", "type": "All Rounder", "lastYear": true, "isSold": false, "isPassed": false, "basePrice": 400, "currentPrice": 400, "teamSoldTo": "", "teamIcon": "" }, { "id": 5, "photoPath": "https://images.unsplash.com/photo-1569604402759-c8e0c98766f9?ixlib=rb-1.2.1&ix'id'=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80", "name": "Gaurang", "flat": "J-602", "type": "Bowler", "lastYear": true, "isSold": false, "isPassed": false, "basePrice": 300, "currentPrice": 300, "teamSoldTo": "", "teamIcon": "" }];
+
+    // x.forEach(i => {
+    // this.db
+    // .collection("players").doc(i.id.toString())
+    // .set(
+    // i, { merge: true }
+    // )
+    // .then(function (docRef) {
+    // console.log("Document written with ID: ", docRef.id);
+    // })
+    // .catch(function (error) {
+    // console.error("Error adding document: ", error);
+    // });
+    // })
+  };
+
+  passedToUnsold = () => {
+    const self = this;
+    this.state.allData.forEach(i => {
+      if (i.isSold === false && i.isPassed === true) {
+        const updatedValue = {
+          ...i,
+          isPassed: false
+        };
+
+        this.db
+          .collection("players")
+          .doc(i.id.toString())
+          .set(updatedValue, { merge: true })
+          .then(function(docRef) {})
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
       }
     });
-
-    setTimeout(() => {
-      const fileData = JSON.stringify(updatedJson);
-      const blob = new Blob([fileData], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.download = "backend.json";
-      link.href = url;
-      link.click();
-    }, 1500);
-
-    // this.db
-    //   .collection("players")
-    //   .add(updatedValue)
-    //   .then(function(docRef) {
-    //     console.log("Document written with ID: ", docRef.id);
-    //   })
-    //   .catch(function(error) {
-    //     console.error("Error adding document: ", error);
-    //   });
+    this.fetchData();
+    this.setState({ a: 1 });
   };
 
   render() {
@@ -213,7 +285,14 @@ class Profile extends Component {
                 }
                 onClick={() => this.setState({ isUnsoldSelected: false })}
               >
-                <i className="fa fa-filter" aria-hidden="true"></i> SOLD
+                <i className="fa fa-filter" aria-hidden="true"></i> SOLD{" "}
+                {this.state.allData
+                  ? `(${
+                      this.state.allData.filter(
+                        i => i.isSold === true && i.isPassed === true
+                      ).length
+                    })`
+                  : ""}
               </div>
               <div
                 className={
@@ -223,7 +302,25 @@ class Profile extends Component {
                 }
                 onClick={() => this.setState({ isUnsoldSelected: true })}
               >
-                <i className="fa fa-filter" aria-hidden="true"></i> UNSOLD
+                <i className="fa fa-filter" aria-hidden="true"></i> UNSOLD{" "}
+                {this.state.allData
+                  ? `(${
+                      this.state.allData.filter(
+                        i => i.isSold === false && i.isPassed === false
+                      ).length
+                    })`
+                  : ""}
+              </div>
+              <div className="move" onClick={() => this.passedToUnsold()}>
+                <i className="fa fa-bolt" aria-hidden="true"></i> Move parked
+                players to unsold{" "}
+                {this.state.allData
+                  ? `(${
+                      this.state.allData.filter(
+                        i => i.isSold === false && i.isPassed === true
+                      ).length
+                    })`
+                  : ""}
               </div>
             </div>
           </div>
