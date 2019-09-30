@@ -371,7 +371,7 @@ class Profile extends Component {
                   </div>
 
                   <div className="info-blocks">
-                    <div className="label">LAST YEAR HISTORY</div>
+                    <div className="label">HISTORY</div>
                     <div className="value">
                       {dataToDisplay.lastYear ? "Yes" : "No"}
                     </div>
