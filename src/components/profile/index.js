@@ -275,7 +275,7 @@ class Profile extends Component {
                       ).length
                     }`
                   : ""}{" "}
-                parked player to unsold{" "}
+                passed player to unsold{" "}
               </div>
             </div>
           </div>
