@@ -15,7 +15,8 @@ class Profile extends Component {
     dataToDisplay: "",
     allData: "",
     isSold: false,
-    isUnsoldSelected: true
+    isUnsoldSelected: true,
+    isViewTeamsEnabled: false
   };
 
   componentDidMount() {
@@ -270,6 +271,10 @@ class Profile extends Component {
     this.setState({ a: 1 });
   };
 
+  viewTeams = () => {
+    this.setState({ isViewTeamsEnabled: !this.state.isViewTeamsEnabled });
+  };
+
   render() {
     const { dataToDisplay } = this.state;
     return (
@@ -322,6 +327,12 @@ class Profile extends Component {
                     })`
                   : ""}
               </div>
+              <div className="move" onClick={() => this.viewTeams()}>
+                <i className="fa fa-eye" aria-hidden="true"></i> View teams
+              </div>
+              {/* <div className="move" onClick={() => this.trackExpenses()}>
+                <i className="fa fa-usd" aria-hidden="true"></i> Track Expenses
+              </div> */}
             </div>
           </div>
         </section>
@@ -451,6 +462,13 @@ class Profile extends Component {
             </section>
           )}
         </section>
+        {this.state.isViewTeamsEnabled ? (
+          <div className="modal-like" onClick={() => this.viewTeams()}>
+            Teams here
+          </div>
+        ) : (
+          ""
+        )}
       </section>
     );
   }
