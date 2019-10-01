@@ -25,6 +25,14 @@ class Profile extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.isUnsoldSelected !== this.state.isUnsoldSelected) {
+      this.setState({
+        currentIndex: 0,
+        fullData: "",
+        dataToDisplay: "",
+        allData: "",
+        isSold: false,
+        isViewTeamsEnabled: false
+      });
       this.fetchData();
     }
   }
@@ -63,6 +71,8 @@ class Profile extends Component {
           dataToDisplay: filteredData[0]
         });
       });
+
+    this.setState({ teams: this.createTeamDetails() });
   };
 
   onNext = () => {
@@ -80,13 +90,24 @@ class Profile extends Component {
           .set(updatedValue, { merge: true })
           .then(function(docRef) {
             self.fetchData();
+            this.setState({ a: 1 });
           })
           .catch(function(error) {
             console.error("Error adding document: ", error);
           });
+      } else {
+        this.setState({
+          dataToDisplay: this.state.fullData[this.state.currentIndex + 1],
+          currentIndex: this.state.currentIndex + 1,
+          isSold: false
+        });
       }
-
-      this.fetchData();
+      // this.setState({
+      //   dataToDisplay: this.state.fullData[this.state.currentIndex + 1],
+      //   currentIndex: this.state.currentIndex + 1,
+      //   isSold: false
+      // });
+      // this.fetchData();
     }
   };
 
@@ -135,6 +156,7 @@ class Profile extends Component {
       .set(updatedValue, { merge: true })
       .then(function(docRef) {
         self.fetchData();
+        this.setState({ a: 1 });
       })
       .catch(function(error) {
         console.error("Error adding document: ", error);
@@ -187,6 +209,7 @@ class Profile extends Component {
   };
 
   viewTeams = () => {
+    this.createTeamDetails();
     this.setState({ isViewTeamsEnabled: !this.state.isViewTeamsEnabled });
   };
 
@@ -200,18 +223,43 @@ class Profile extends Component {
         querySnapshot.forEach(doc => {
           data.push(doc.data());
         });
-        arr = allTeams.map(team => {
-          return (
-            <section>
-              <div>
-                {team.imgSrc} {team.name}
-              </div>
-            </section>
-          );
+        const teamNames = allTeams.map(x => x.name);
+        teamNames.forEach(x => {
+          const teamWiseDetails = data.filter(y => {
+            if (x === y.teamSoldTo) {
+              return y;
+            }
+          });
+
+          let balance = 10000;
+          let playersInTeam = [];
+          teamWiseDetails.forEach(i => {
+            playersInTeam.push(i.name);
+            balance -= i.currentPrice;
+          });
+
+          const singleTeam = teamWiseDetails.map(z => {
+            return (
+              <section key={z.teamSoldTo} title={z.teamSoldTo}>
+                <div>
+                  <img src={z.teamIcon}></img>
+                  <div>
+                    <div>{z.teamSoldTo}</div>
+                    <div className="balance">₹ {balance} remaining </div>
+                  </div>
+                </div>
+                <p>
+                  {playersInTeam.map((p, index) => {
+                    return <p key={p}>{`${index + 1}. ${p}`}</p>;
+                  })}
+                </p>
+              </section>
+            );
+          });
+          arr.push(singleTeam[0]);
         });
+        this.setState({ teams: arr });
       });
-    console.log(arr);
-    return arr;
   };
 
   render() {
@@ -222,7 +270,7 @@ class Profile extends Component {
       isViewTeamsEnabled,
       isSold
     } = this.state;
-    const teamsDetails = this.createTeamDetails();
+
     return (
       <section className="profile">
         <section className="action">
@@ -444,29 +492,7 @@ class Profile extends Component {
             title="Click anywhere to close"
             onClick={() => this.viewTeams()}
           >
-            {allTeams.map(team => {
-              return (
-                <section key={team.name} title={team.name}>
-                  <div>
-                    <img src={team.imgSrc}></img>
-                    <div>
-                      <div>{team.name}</div>
-                      <div className="balance">₹ 8000 remaining </div>
-                    </div>
-                  </div>
-                  <p>
-                    <p>1. Arijit Patra</p>
-                    <p>2. Arijit Patra</p>
-                    <p>3. Arijit Patra</p>
-                    <p>4. Arijit Patra</p>
-                    <p>5. Arijit Patra</p>
-                    <p>6. Arijit Patra</p>
-                    <p>7. Arijit Patra</p>
-                    <p>8. Arijit Patra</p>
-                  </p>
-                </section>
-              );
-            })}
+            {this.state.teams}
           </div>
         ) : (
           ""

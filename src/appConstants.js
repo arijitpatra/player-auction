@@ -48,3 +48,5 @@ export const allTeams = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1wwNFjsmptYthTZl19NLdql9XpOlmCHCsvgePJChue3OGeR_sRg"
   }
 ];
+
+export const randomId = "Infosysph2";
