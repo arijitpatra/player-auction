@@ -5,7 +5,7 @@ class Header extends Component {
   render() {
     return (
       <section className="header">
-        <img src={"https://brandmark.io/logo-rank/random/pepsi.png"} />
+        <img src={"mpl.jpg"} />
         <span>MPL Auction</span>
       </section>
     );
