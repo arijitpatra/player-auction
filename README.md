@@ -1,3 +1,18 @@
+## Live URL: 
+
+https://arijitpatra.in/player-auction/ (**password protected**, do not perform any operation, the intention is to keep the data unchanged)
+
+## Screenshots:
+
+<img width="1800" height="942" alt="Screenshot 2026-03-22 at 21 49 40" src="https://github.com/user-attachments/assets/d8b5ab82-4f69-4a1f-a6f7-f4bf5477a4cd" />
+
+<img width="1800" height="943" alt="Screenshot 2026-03-22 at 21 50 20" src="https://github.com/user-attachments/assets/9c71b7f4-4c2f-4a5b-a5e4-cec90c00d379" />
+
+<img width="1800" height="939" alt="Screenshot 2026-03-22 at 21 50 41" src="https://github.com/user-attachments/assets/407bac6f-1d6e-4036-be38-d9ca400a0994" />
+
+-----
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
