@@ -1,7 +1,7 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
 var config = {
-  apiKey: "AIzaSyD09tB_WCf7ZT_crDupzYa4mkbKXB2DSxw",
+  apiKey: "REMOVED_API_KEY",
   authDomain: "player-auction.firebaseapp.com",
   databaseURL: "https://player-auction.firebaseio.com",
   projectId: "player-auction",
